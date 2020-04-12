@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build using Docker
-        uses: ./.github/actions/docker-build
+        uses: ./.github/actions/docker-build.yml
