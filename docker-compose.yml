@@ -1,0 +1,5 @@
+version: '2.4'
+services:
+  mq-control:
+    container_name: mq-control
+    build: .
