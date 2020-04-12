@@ -3,3 +3,4 @@ services:
   mq-control:
     container_name: mq-control
     build: .
+    env_file: .env
