@@ -1,5 +1,7 @@
 # mqcontrol
 
+![Docker build](https://github.com/albertnis/mqcontrol/workflows/Docker%20build/badge.svg)
+
 ## Configure It
 
 Configuration is via environment variables. See the [`.env`](/.env) file for an example. You'll need to provide values for `MQTT_COMMAND` and `MQTT_TOPIC` before running.
