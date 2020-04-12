@@ -1,0 +1,12 @@
+name: Docker build
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build using Docker
+        uses: ./.github/actions/docker-build
