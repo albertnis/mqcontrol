@@ -2,4 +2,4 @@ name: Docker Build
 description: Build the project using Docker
 runs:
   using: 'docker'
-  image: './Dockerfile'
+  image: '../../../Dockerfile'
