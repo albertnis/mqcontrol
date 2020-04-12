@@ -69,7 +69,7 @@ func main() {
 		select {
 		case payload := <-msg:
 			fmt.Printf("Received message: %s\n", payload)
-			cmd := exec.Command("sh", "-c", "echo worked")
+			cmd := exec.Command("sh", "-c", conf.Command)
 			cmd.Stderr = os.Stderr
 			cmd.Stdout = os.Stdout
 			if err := cmd.Run(); err != nil {
