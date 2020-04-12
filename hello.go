@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 
@@ -15,14 +17,14 @@ func subscribe(client MQTT.Client, c chan []byte) {
 	})
 
 	if token := client.Subscribe("pc/desktop/hibernate", 1, handler); token.Wait() && token.Error() != nil {
-		fmt.Printf("Subscription failure: %s", token.Error())
+		log.Printf("Subscription failure: %s", token.Error())
 		os.Exit(1)
 	}
 }
 
 func main() {
 	fmt.Println("Started")
-	stopping := make(chan os.Signal)
+	var stopping = make(chan os.Signal)
 	signal.Notify(stopping, syscall.SIGTERM)
 	signal.Notify(stopping, syscall.SIGINT)
 
@@ -32,7 +34,7 @@ func main() {
 
 	client := MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		fmt.Printf("Connection failure: %s", token.Error())
+		log.Printf("Connection failure: %s", token.Error())
 		panic(token.Error())
 	}
 
@@ -43,7 +45,14 @@ func main() {
 	for {
 		select {
 		case payload := <-msg:
-			fmt.Println(payload)
+			fmt.Printf("Received message: %s\n", payload)
+			cmd := exec.Command("sh", "-c", "ls")
+			cmd.Stderr = os.Stderr
+			cmd.Stdout = os.Stdout
+			if err := cmd.Run(); err != nil {
+				log.Fatal(err)
+			}
+
 		case <-stopping:
 			fmt.Println("Stopping")
 			client.Disconnect(250)
