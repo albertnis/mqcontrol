@@ -9,16 +9,27 @@ import (
 	"syscall"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"github.com/kelseyhightower/envconfig"
 )
 
-func subscribe(client MQTT.Client, c chan []byte) {
+type config struct {
+	Command  string `required:"true"`
+	Topic    string `required:"true"`
+	Broker   string `default:"127.0.0.1:1883"`
+	ClientID string `default:"mq-control"`
+	User     string
+	Password string
+}
+
+func subscribe(client MQTT.Client, topic string, c chan []byte) {
 	handler := MQTT.MessageHandler(func(client MQTT.Client, message MQTT.Message) {
 		c <- message.Payload()
 	})
 
-	if token := client.Subscribe("pc/desktop/hibernate", 1, handler); token.Wait() && token.Error() != nil {
-		log.Printf("Subscription failure: %s", token.Error())
-		os.Exit(1)
+	token := client.Subscribe(topic, 1, handler)
+	token.Wait()
+	if token.Error() != nil {
+		log.Fatal(token.Error().Error())
 	}
 }
 
@@ -28,29 +39,41 @@ func main() {
 	signal.Notify(stopping, syscall.SIGTERM)
 	signal.Notify(stopping, syscall.SIGINT)
 
+	var conf config
+	err := envconfig.Process("mqtt", &conf)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	if conf.Command == "" {
+		log.Fatal("No MQTT_COMMAND variable provided")
+	}
+	if conf.Topic == "" {
+		log.Fatal("No MQTT_TOPIC variable provided")
+	}
+
 	opts := MQTT.NewClientOptions()
-	opts.AddBroker("192.168.1.110:1883")
-	opts.SetClientID("mq-control-desktop")
+	opts.AddBroker(conf.Broker)
+	opts.SetClientID(conf.ClientID)
+	opts.SetUsername(conf.User)
+	opts.SetPassword(conf.Password)
 
 	client := MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Printf("Connection failure: %s", token.Error())
-		panic(token.Error())
+		log.Fatal(token.Error().Error())
 	}
 
 	msg := make(chan []byte)
-
-	go subscribe(client, msg)
+	go subscribe(client, conf.Topic, msg)
 
 	for {
 		select {
 		case payload := <-msg:
 			fmt.Printf("Received message: %s\n", payload)
-			cmd := exec.Command("sh", "-c", "ls")
+			cmd := exec.Command("sh", "-c", "echo worked")
 			cmd.Stderr = os.Stderr
 			cmd.Stdout = os.Stdout
 			if err := cmd.Run(); err != nil {
-				log.Fatal(err)
+				log.Fatal(err.Error())
 			}
 
 		case <-stopping:
