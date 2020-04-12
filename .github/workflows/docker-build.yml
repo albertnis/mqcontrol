@@ -11,4 +11,4 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Build using Docker
-        uses: .github/actions/docker-build
+        uses: ./.github/actions/docker-build
