@@ -1,4 +1,4 @@
-module github.com/albertnis/mq-control
+module github.com/albertnis/mqcontrol
 
 go 1.14
 

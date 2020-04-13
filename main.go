@@ -45,7 +45,7 @@ func main() {
 	commandPtr := flag.String("c", "", "Command to run when any message received on topic")
 	topicPtr := flag.String("t", "computer/command", "Topic to subscribe to")
 	brokerPtr := flag.String("h", "127.0.0.1:1883", "Address and port of MQTT broker")
-	clientIDPtr := flag.String("i", "mq-control", "ID to use for this client")
+	clientIDPtr := flag.String("i", "mqcontrol", "ID to use for this client")
 	userPtr := flag.String("u", "", "Username for MQTT connection")
 	passwordPtr := flag.String("P", "", "Password for MQTT connection")
 
