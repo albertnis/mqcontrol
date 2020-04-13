@@ -6,7 +6,7 @@ VERSION=$1
 mkdir -p ~/.docker
 echo "{\"experimental\": \"enabled\"}" > ~/.docker/config.json
 
-docker login -u albertnis -p $2
+docker login -u albertnis -p $2 docker.io
 
 for RI in alpine debian
 do
