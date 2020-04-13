@@ -16,7 +16,7 @@ ARG GOOS=linux
 ARG BIN_BASE_NAME=mqcontrol
 ARG BIN_EXT=
 ARG BIN_NAME=${BIN_BASE_NAME}_${GOOS}_${GOARCH}${BIN_EXT}
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=${goarch} go build -o ./bin/${BIN_NAME} .
+RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o ./bin/${BIN_NAME} .
 
 FROM scratch as export
 COPY --from=build /project/bin/${BIN_NAME} /${BIN_NAME}
