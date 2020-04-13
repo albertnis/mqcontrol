@@ -3,9 +3,8 @@ on:
   push:
     branches:
       - test-docker-push
-  push:
     tags:
-    - 'v*'
+      - 'v*'
 
 jobs:
   build:
