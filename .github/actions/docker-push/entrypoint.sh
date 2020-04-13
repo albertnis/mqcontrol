@@ -3,6 +3,8 @@ set -e
 
 VERSION=$1
 
+echo "{\"experimental\": \"enabled\"}" > ~/.docker/config.json
+
 docker login -u albertnis -p $2
 
 for RI in alpine debian
