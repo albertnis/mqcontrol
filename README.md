@@ -6,7 +6,7 @@ mqcontrol is a lightweight and cross-platform program which subscribes to an MQT
 
 ## Installation
 
-See the [releases](/releases) page for links to binaries for your operating system and architecture. Or download the code and [run it](#run-it).
+See the [releases](https://github.com/albertnis/mqcontrol/releases) page for links to binaries for your operating system and architecture. Or download the code and [run it](#run-it).
 
 ## Usage
 
