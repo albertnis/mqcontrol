@@ -1,8 +1,6 @@
 name: Docker push
 on:
   push:
-    branches:
-      - test-docker-push
     tags:
       - 'v*'
 
