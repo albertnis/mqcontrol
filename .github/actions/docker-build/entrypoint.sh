@@ -9,6 +9,6 @@ docker build --target export \
     -o $BUILD_DIR .
 
 mv $BUILD_DIR/mqcontrol $BUILD_DIR/$3
-chmod 755 $BUILD_DIR/$3
+chmod -R 755 $BUILD_DIR
 
 echo "::set-output name=artifact_path::./$BUILD_DIR/$3"
