@@ -8,7 +8,7 @@ docker build --target export \
     --build-arg GOOS=$2 \
     -o $BUILD_DIR .
 
-mv $BUILD_DIR/mqcontrol $BUILD_DIR/$3
 chmod -R 755 $BUILD_DIR
+mv $BUILD_DIR/mqcontrol $BUILD_DIR/$3
 
 echo "::set-output name=artifact_path::./$BUILD_DIR/$3"
