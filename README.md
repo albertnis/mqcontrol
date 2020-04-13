@@ -2,17 +2,62 @@
 
 ![Docker build](https://github.com/albertnis/mqcontrol/workflows/Docker%20build/badge.svg)
 
-## Configure It
+mqcontrol is a lightweight and cross-platform program which subscribes to an MQTT topic and executes a predefined command whenever a message appears. It's an easy way to make your PC part of your home automation or IoT system!
+
+## Installation
+
+See the [releases](/releases) page for links to binaries for your operating system and architecture. Or download the code and [run it](#run-it).
+
+## Usage
 
 Configuration is via command-line arguments.
 
 ```bash
-go run main.go --help
+mqcontrol --help
+  -c string
+        Command to run when any message received on topic
+  -h string
+        Address and port of MQTT broker (default "127.0.0.1:1883")
+  -i string
+        ID to use for this client (default "mqcontrol")
+  -t string
+        Topic to subscribe to (default "computer/command")
+  -u string
+        Username for MQTT connection
+  -P string
+        Password for MQTT connection
 ```
+
+### Examples
+
+* Make a topic to hibernate your PC
+
+    ```bash
+    mqcontrol -c "systemctl hibernate" -t desktop/command/hibernate
+    ```
+
+* Dim laptop screen when the lights are turned off
+
+    ```bash
+    mqcontrol -c "brightnessctl 50%-" -t lights/bedroom/turnoff
+    ```
+
+* Close gzdoom when the office door is opened
+
+    ```bash
+    mqcontrol -c "killall gzdoom" -t work/office/door/open
+    ```
 
 ## Run It
 
-With Go:
+Get then run with Go:
+
+```bash
+go get github.com/albertnis/mqcontrol
+go run github.com/albertnis/mqcontrol -c "echo Message received"
+```
+
+Run with Go in cloned repo:
 
 ```bash
 go run main.go -c "echo Message received"
