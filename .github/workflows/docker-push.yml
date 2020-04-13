@@ -1,0 +1,22 @@
+name: Docker push
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set output
+        id: get-tag
+        run: echo ::set-output name=tag::${GITHUB_REF:11}
+      - name: Build and push using Docker
+        uses: ./.github/actions/docker-push
+        with:
+          version: ${{ steps.get-tag.outputs.tag }}
+          docker-repo-token: ${{ secrets.DOCKER_HUB_TOKEN }}
+

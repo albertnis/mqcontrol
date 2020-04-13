@@ -1,0 +1,15 @@
+name: Docker Build
+description: Build the project using Docker
+inputs:
+  version:
+    description: Version number
+    required: true
+  docker-repo-token:
+    description: Docker repo token
+    required: true
+runs:
+  using: docker
+  image: ./Dockerfile
+  args:
+    - ${{ inputs.version }}
+    - ${{ inputs.docker-repo-token }}
