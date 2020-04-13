@@ -1,4 +1,4 @@
-ARG RUNTIME_IMAGE=scratch
+ARG RUNTIME_IMAGE=alpine
 FROM golang:1.14-alpine AS build
 RUN apk add --no-cache git
 

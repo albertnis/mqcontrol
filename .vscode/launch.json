@@ -10,8 +10,9 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "envFile": "${workspaceFolder}/.env",
-            "args": []
+            "args": [
+                "-c", "echo message received"
+            ]
         }
     ]
 }
