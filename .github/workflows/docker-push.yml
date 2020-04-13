@@ -17,6 +17,6 @@ jobs:
       - name: Build and push using Docker
         uses: ./.github/actions/docker-push
         with:
-          version: 0.2.0
+          version: ${{ steps.get-tag.outputs.tag }}
           docker-repo-token: ${{ secrets.DOCKER_HUB_TOKEN }}
 
