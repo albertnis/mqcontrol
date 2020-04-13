@@ -5,7 +5,7 @@ ADD entrypoint.sh /entrypoint.sh
 COPY config.json /root/.docker/
 
 ENV DOCKER_BUILDKIT=1
-RUN "echo $HOME"
+RUN "cat ~/.docker/config.json"
 
 RUN docker manifest
 ENTRYPOINT [ "/entrypoint.sh" ] 
