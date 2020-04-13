@@ -9,4 +9,6 @@ docker build --target export \
     --build-arg BIN_NAME=$3 \
     -o $BUILD_DIR .
 
+chmod -R 755 $BUILD_DIR
+
 echo "::set-output name=artifact_path::./$BUILD_DIR/$3"
