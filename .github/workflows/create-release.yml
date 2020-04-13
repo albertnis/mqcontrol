@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Set output
+        id: get-tag
+        run: echo ::set-output name=tag::${GITHUB_REF:11}
       - name: Build linux-amd64
         id: build-linux-amd64
         uses: ./.github/actions/docker-build
@@ -65,7 +68,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build-linux-amd64.outputs.artifact_path }}
-          asset_name: mqcontrol_${{ github.ref }}_linux_amd64
+          asset_name: mqcontrol_${{ steps.get-tag.outputs.tag }}_linux_amd64
           asset_content_type: application/octet-stream
       - name: Upload linux-arm
         id: upload-linux-arm 
@@ -75,7 +78,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build-linux-arm.outputs.artifact_path }}
-          asset_name: mqcontrol_${{ github.ref }}_linux_arm
+          asset_name: mqcontrol_${{ steps.get-tag.outputs.tag }}_linux_arm
           asset_content_type: application/octet-stream
       - name: Upload linux-arm64
         id: upload-linux-arm64 
@@ -85,7 +88,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build-linux-arm64.outputs.artifact_path }}
-          asset_name: mqcontrol_${{ github.ref }}_linux_arm64
+          asset_name: mqcontrol_${{ steps.get-tag.outputs.tag }}_linux_arm64
           asset_content_type: application/octet-stream
       - name: Upload windows-amd64
         id: upload-windows-amd64 
@@ -95,7 +98,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build-windows-amd64.outputs.artifact_path }}
-          asset_name: mqcontrol_${{ github.ref }}_windows_amd64
+          asset_name: mqcontrol_${{ steps.get-tag.outputs.tag }}_windows_amd64
           asset_content_type: application/octet-stream
       - name: Upload darwin-amd64
         id: upload-darwin-amd64 
@@ -105,5 +108,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build-darwin-amd64.outputs.artifact_path }}
-          asset_name: mqcontrol_${{ github.ref }}_macos_amd64
+          asset_name: mqcontrol_${{ steps.get-tag.outputs.tag }}_macos_amd64
           asset_content_type: application/octet-stream
