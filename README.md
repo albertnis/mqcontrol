@@ -28,6 +28,16 @@ mqcontrol --help
         Password for MQTT connection
 ```
 
+### Notes
+
+- The command argument does not include any shell processing. If you're having problems getting commands to run or want them to run in a shell, specify the shell explicitly. For example:
+
+    ```bash
+    mqcontrol -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
+    ```
+
+- An error in the executed command will cause the entire program to terminate. Stderr and an exit code from the executed command will be available.
+
 ### Examples
 
 * Make a topic to hibernate your PC

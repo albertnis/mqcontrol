@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
@@ -60,17 +62,24 @@ func main() {
 		Password: *passwordPtr,
 	}
 
+	if conf.Topic == "" {
+		fmt.Println("No topic argument provided")
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 	if conf.Command == "" {
 		fmt.Println("No command argument provided")
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	if conf.Topic == "" {
-		fmt.Println("No topic argument provided")
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		flag.PrintDefaults()
-		os.Exit(1)
+
+	r := csv.NewReader(strings.NewReader(conf.Command))
+	r.Comma = ' '
+	commandFields, err := r.Read()
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
 	opts := MQTT.NewClientOptions()
@@ -92,7 +101,7 @@ func main() {
 	for {
 		select {
 		case <-msg:
-			cmd := exec.Command("sh", "-c", conf.Command)
+			cmd := exec.Command(commandFields[0], commandFields[1:]...)
 			cmd.Stderr = os.Stderr
 			cmd.Stdout = os.Stdout
 			if err := cmd.Run(); err != nil {
