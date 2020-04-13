@@ -16,3 +16,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Build using Docker
         uses: ./.github/actions/docker-build
+        with:
+          runtime-image: alpine
+          goarch: amd64
+          goos: linux
+          bin-ext:

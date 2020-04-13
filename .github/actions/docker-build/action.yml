@@ -3,3 +3,8 @@ description: Build the project using Docker
 runs:
   using: 'docker'
   image: './Dockerfile'
+  args:
+    - ${{ inputs.runtime-image }}
+    - ${{ inputs.goarch }}
+    - ${{ inputs.goos }}
+    - ${{ inputs.bin-ext }}
