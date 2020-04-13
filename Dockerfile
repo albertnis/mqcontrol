@@ -1,4 +1,5 @@
 ARG RUNTIME_IMAGE=alpine
+ARG RUNTIME_PLATFORM=amd64
 FROM golang:1.14-alpine AS build
 RUN apk add --no-cache git
 
@@ -14,14 +15,12 @@ COPY . .
 ARG GOARCH=amd64
 ARG GOOS=linux
 ARG BIN_BASE_NAME=mqcontrol
-ARG BIN_EXT=
-ARG BIN_NAME=${BIN_BASE_NAME}_${GOOS}_${GOARCH}${BIN_EXT}
-RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o ./bin/${BIN_NAME} .
+RUN CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build -o ./bin/mqcontrol .
 
 FROM scratch as export
-COPY --from=build /project/bin/${BIN_NAME} /${BIN_NAME}
+COPY --from=build /project/bin/mqcontrol /mqcontrol
 
-FROM $RUNTIME_IMAGE as runtime
-COPY --from=build /project/bin/${BIN_NAME} /bin/mqcontrol
+FROM --platform=$RUNTIME_PLATFORM $RUNTIME_IMAGE AS runtime
+COPY --from=build /project/bin/mqcontrol /bin
 
 ENTRYPOINT ["/bin/mqcontrol"]
