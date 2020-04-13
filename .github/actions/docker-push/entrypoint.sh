@@ -15,27 +15,27 @@ do
     --build-arg GOOS=linux \
     --build-arg RUNTIME_IMAGE=$RI:latest \
     --build-arg RUNTIME_PLATFORM=linux/arm/v7 \
-    -t albertnis/mqcontrol:$VERSION-$RI-arm32v7 .
+    -t mqcontrol:$VERSION-$RI-arm32v7 .
 
   docker build --target runtime \
     --build-arg GOARCH=arm64 \
     --build-arg GOOS=linux \
     --build-arg RUNTIME_IMAGE=$RI:latest \
     --build-arg RUNTIME_PLATFORM=linux/arm64/v8 \
-    -t albertnis/mqcontrol:$VERSION-$RI-arm64v8 .
+    -t mqcontrol:$VERSION-$RI-arm64v8 .
 
   docker build --target runtime \
     --build-arg GOARCH=amd64 \
     --build-arg GOOS=linux \
     --build-arg RUNTIME_IMAGE=$RI:latest \
     --build-arg RUNTIME_PLATFORM=linux/amd64 \
-    -t albertnis/mqcontrol:$VERSION-$RI-amd64 .
+    -t mqcontrol:$VERSION-$RI-amd64 .
 
   docker manifest create \
     albertnis/mqcontrol:$VERSION-$RI \
-    albertnis/mqcontrol:$VERSION-$RI-arm32v7 \
-    albertnis/mqcontrol:$VERSION-$RI-arm64v8 \
-    albertnis/mqcontrol:$VERSION-$RI-amd64
+    mqcontrol:$VERSION-$RI-arm32v7 \
+    mqcontrol:$VERSION-$RI-arm64v8 \
+    mqcontrol:$VERSION-$RI-amd64
 
   docker manifest create \
     albertnis/mqcontrol:latest-$RI \
