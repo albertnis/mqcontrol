@@ -16,7 +16,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Build using Docker
         uses: ./.github/actions/docker-build
-        with:
-          goarch: amd64
-          goos: linux
-          bin-name: linux-amd64
+

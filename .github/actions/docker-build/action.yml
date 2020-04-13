@@ -1,8 +1,24 @@
 name: Docker Build
 description: Build the project using Docker
+inputs:
+  goarch:
+    description: Architecture to build for
+    required: true
+    default: amd64
+  goos:
+    description: Operating system to build for
+    required: true
+    default: linux
+  bin-name:
+    description: Name of build binary file
+    required: true
+    default: app
+outputs:
+  artifact_path:
+    description: Path to the build artifact
 runs:
-  using: 'docker'
-  image: './Dockerfile'
+  using: docker
+  image: ./Dockerfile
   args:
     - ${{ inputs.goarch }}
     - ${{ inputs.goos }}
