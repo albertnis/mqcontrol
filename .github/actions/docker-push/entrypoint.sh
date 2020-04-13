@@ -11,14 +11,14 @@ do
     --build-arg GOARCH=arm \
     --build-arg GOOS=linux \
     --build-arg RUNTIME_IMAGE=$RI:latest \
-    --build-arg RUNTIME_PLATFORM=linux/arm32v7 \
+    --build-arg RUNTIME_PLATFORM=linux/arm/v7 \
     -t albertnis/mqcontrol:$VERSION-$RI-arm32v7 .
 
   docker build --target runtime \
     --build-arg GOARCH=arm64 \
     --build-arg GOOS=linux \
     --build-arg RUNTIME_IMAGE=$RI:latest \
-    --build-arg RUNTIME_PLATFORM=linux/arm64v8 \
+    --build-arg RUNTIME_PLATFORM=linux/arm64/v8 \
     -t albertnis/mqcontrol:$VERSION-$RI-arm64v8 .
 
   docker build --target runtime \
