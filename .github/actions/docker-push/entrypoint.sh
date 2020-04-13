@@ -3,6 +3,7 @@ set -e
 
 VERSION=$1
 
+mkdir -p ~/.docker
 echo "{\"experimental\": \"enabled\"}" > ~/.docker/config.json
 
 docker login -u albertnis -p $2
