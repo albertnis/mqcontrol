@@ -76,13 +76,13 @@ go run main.go -c "echo Message received"
 With Docker:
 
 ```bash
-docker build -t mqcontrol .
+DOCKER_BUILDKIT=1 docker build -t mqcontrol .
 docker run -it --rm --network=host mqcontrol -c "echo Message received"
 ```
 
 With docker-compose:
 
 ```bash
-docker-compose build
+DOCKER_BUILDKIT=1 docker-compose build
 docker-compose run mqcontrol -c "echo Message received"
 ```

@@ -19,37 +19,37 @@ jobs:
         id: build-linux-amd64
         uses: ./.github/actions/docker-build
         with:
-          goarch: amd64
-          goos: linux
           bin-name: linux-amd64
+          target-os: linux
+          target-arch: amd64
       - name: Build linux-arm
         id: build-linux-arm
         uses: ./.github/actions/docker-build
         with:
-          goarch: arm
-          goos: linux
           bin-name: linux-arm
+          target-os: linux
+          target-arch: arm
       - name: Build linux-arm64
         id: build-linux-arm64
         uses: ./.github/actions/docker-build
         with:
-          goarch: arm64
-          goos: linux
           bin-name: linux-arm64
+          target-os: linux
+          target-arch: arm64
       - name: Build windows-amd64
         id: build-windows-amd64
         uses: ./.github/actions/docker-build
         with:
-          goarch: amd64
-          goos: windows
           bin-name: windows-amd64
+          target-os: windows
+          target-arch: amd64
       - name: Build darwin-amd64
         id: build-darwin-amd64
         uses: ./.github/actions/docker-build
         with:
-          goarch: amd64
-          goos: darwin
           bin-name: darwin-amd64
+          target-os: darwin
+          target-arch: amd64
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
