@@ -14,7 +14,7 @@ COPY . .
 ARG TARGETOS
 ARG TARGETARCH
 ARG GOOPTIONS="GOOS=${TARGETOS} GOARCH=${TARGETARCH}"
-RUN CGO_ENABLED=0 {GOOPTIONS} go build -o ./bin/mqcontrol .
+RUN CGO_ENABLED=0 ${GOOPTIONS} go build -o ./bin/mqcontrol .
 
 FROM scratch as export
 COPY --from=build /project/bin/mqcontrol /mqcontrol
