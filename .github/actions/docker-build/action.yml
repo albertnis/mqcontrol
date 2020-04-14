@@ -1,14 +1,10 @@
 name: Docker Build
 description: Build the project using Docker
 inputs:
-  goarch:
-    description: Architecture to build for
+  go-options:
+    description: Environment variables for go build
     required: true
-    default: amd64
-  goos:
-    description: Operating system to build for
-    required: true
-    default: linux
+    default:
   bin-name:
     description: Name of build binary file
     required: true
@@ -20,6 +16,5 @@ runs:
   using: docker
   image: ./Dockerfile
   args:
-    - ${{ inputs.goarch }}
-    - ${{ inputs.goos }}
+    - ${{ inputs.go-options }}
     - ${{ inputs.bin-name }}

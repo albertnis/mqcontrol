@@ -2,13 +2,11 @@
 set -e
 
 BUILD_DIR=bin
+ARTIFACT_PATH=$BUILD_DIR/$2
 
-docker build --target export \
-    --build-arg GOARCH=$1 \
-    --build-arg GOOS=$2 \
+docker build --target export --build-arg GOOPTIONS="$1" \
     -o $BUILD_DIR .
 
 chmod -R 755 $BUILD_DIR
-mv $BUILD_DIR/mqcontrol $BUILD_DIR/$3
-
-echo "::set-output name=artifact_path::./$BUILD_DIR/$3"
+mv $BUILD_DIR/mqcontrol ARTIFACT_PATH
+echo "::set-output name=artifact_path::./$ARTIFACT_PATH"
