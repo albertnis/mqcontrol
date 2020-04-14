@@ -11,7 +11,7 @@ for RI in debian scratch alpine
 do
   docker buildx build --target runtime \
     --platform linux/amd64,linux/arm/v7,linux/arm64/v8 \
-    --build-arg RUNTIME_IMAGE=$RI:latest \
+    --build-arg TARGETIMAGE=$RI:latest \
     -t albertnis/mqcontrol:$VERSION-$RI \
     -t albertnis/mqcontrol:latest-$RI \
     -t albertnis/mqcontrol:latest \
