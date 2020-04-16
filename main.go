@@ -23,20 +23,27 @@ type config struct {
 	Password string
 }
 
-func subscribe(client MQTT.Client, topic string, c chan []byte) {
+func subscribe(client MQTT.Client, topic string, msg chan []byte) {
 	handler := MQTT.MessageHandler(func(client MQTT.Client, message MQTT.Message) {
 		payload := message.Payload()
-		fmt.Printf("Message received on topic %s: %s\n", topic, payload)
-		c <- payload
+		log.Printf("Message received on topic %s: %s\n", topic, payload)
+		msg <- payload
 	})
 
-	fmt.Printf("Subscribing to topic %s... ", topic)
+	log.Printf("Subscribing to topic %s... ", topic)
 	token := client.Subscribe(topic, 1, handler)
 	token.Wait()
 	if token.Error() != nil {
 		log.Fatal(token.Error().Error())
 	}
-	fmt.Println("Success")
+	log.Println("Subscription successful")
+}
+
+func createOnConnectHandler(topic string, msg chan []byte) MQTT.OnConnectHandler {
+	return func(client MQTT.Client) {
+		log.Println("Client connected")
+		go subscribe(client, topic, msg)
+	}
 }
 
 func main() {
@@ -87,16 +94,20 @@ func main() {
 	opts.SetClientID(conf.ClientID)
 	opts.SetUsername(conf.User)
 	opts.SetPassword(conf.Password)
+	opts.SetAutoReconnect(true)
 
-	fmt.Printf("Connecting to client %s... ", conf.Broker)
+	opts.SetConnectionLostHandler(func(c MQTT.Client, err error) {
+		log.Println("Client connection lost unexpectedly")
+	})
+
+	msg := make(chan []byte)
+	opts.SetOnConnectHandler(createOnConnectHandler(conf.Topic, msg))
+
+	log.Printf("Connecting to client %s... ", conf.Broker)
 	client := MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatal(token.Error().Error())
 	}
-	fmt.Println("Success")
-
-	msg := make(chan []byte)
-	go subscribe(client, conf.Topic, msg)
 
 	for {
 		select {
@@ -109,9 +120,10 @@ func main() {
 			}
 
 		case <-stopping:
-			fmt.Printf("\nDisconnecting from client %s... ", conf.Broker)
+			log.Println("Application is being stopped")
+			log.Printf("Disconnecting from client %s... ", conf.Broker)
 			client.Disconnect(250)
-			fmt.Println("Success")
+			log.Println("Success")
 			os.Exit(0)
 		}
 	}
