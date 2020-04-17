@@ -86,3 +86,14 @@ With docker-compose:
 DOCKER_BUILDKIT=1 docker-compose build
 docker-compose run mqcontrol -c "echo Message received"
 ```
+
+## Run it at startup
+
+### On Windows using Task Scheduler
+
+1. Open Task Scheduler and select Action -> Create Task from the menu bar.
+1. On the "General" tab, select "Run whether the user is logged in or not" and check "Do not store password...".
+1. On the "Triggers" tab, create a new trigger. Use "On startup" or "At log on".
+1. On the "Actions" tab, create a new action pointing to your mqcontrol binary with desired arguments.
+1. Configure the remaining tabs as desired then click "OK".
+1. Browse to the newly created task under the "Task Scheduler Library". Right click on the task and select "Run".
