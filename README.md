@@ -97,3 +97,26 @@ docker-compose run mqcontrol -c "echo Message received"
 1. On the "Actions" tab, create a new action pointing to your mqcontrol binary with desired arguments.
 1. Configure the remaining tabs as desired then click "OK".
 1. Browse to the newly created task under the "Task Scheduler Library". Right click on the task and select "Run".
+
+### On Linux using systemd
+
+1. Create a systemd unit file as below, customise the `ExecStart` line, then save it at `/usr/lib/systemd/system/mqcontrol.service`:
+
+      ```service
+      [Unit]
+      Description=mqcontrol remote control
+
+      [Service]
+      Type=simple
+      ExecStart=/home/user/go/bin/mqcontrol -c "systemctl hibernate" -h 192.168.1.110:1883
+
+      [Install]
+      WantedBy=multi-user.target
+      ```
+
+1. Start and enable the `mqcontrol` service
+
+      ```sh
+      systemctl start mqcontrol
+      systemctl enable mqcontrol
+      ```
