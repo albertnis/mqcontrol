@@ -2,11 +2,27 @@
 
 ![Docker build](https://github.com/albertnis/mqcontrol/workflows/Docker%20build/badge.svg)
 
-mqcontrol is a lightweight and cross-platform program which subscribes to an MQTT topic and executes a predefined command whenever a message appears. It's an easy way to make your PC part of your home automation or IoT system!
+mqcontrol is a lightweight and cross-platform utility which subscribes to an MQTT topic and executes a predefined command on your computer whenever a message appears. It's an easy way to make your PC part of your home automation or IoT system!
 
 ## Installation
 
-See the [releases](https://github.com/albertnis/mqcontrol/releases) page for links to binaries for your operating system and architecture. Or download the code and [run it](#run-it).
+See the [releases](https://github.com/albertnis/mqcontrol/releases) page and download a binary for your operating system and architecture.
+
+Or install it with Go:
+
+```sh
+go install github.com/albertnis/mqcontrol
+```
+
+To complete local installation, add mqcontrol to PATH and/or [run it at startup](#run-it-at-startup).
+
+### Docker
+
+mqcontrol is available on Docker Hub:[albertnis/mqcontrol](https://hub.docker.com/r/albertnis/mqcontrol). The images are cross-platform and available in a variety of flavours. See the Docker Hub overview for more information.
+
+```sh
+docker run albertnis/mqcontrol --help
+```
 
 ## Usage
 
@@ -28,16 +44,6 @@ mqcontrol --help
         Password for MQTT connection
 ```
 
-### Notes
-
-- The command argument does not include any shell processing. If you're having problems getting commands to run or want them to run in a shell, specify the shell explicitly. For example:
-
-    ```bash
-    mqcontrol -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
-    ```
-
-- An error in the executed command will cause the entire program to terminate. Stderr and an exit code from the executed command will be available.
-
 ### Examples
 
 * Make a topic to hibernate your PC
@@ -58,7 +64,17 @@ mqcontrol --help
     mqcontrol -c "killall gzdoom" -t work/office/door/open
     ```
 
-## Run It
+### Notes
+
+- The command argument does not include any shell processing. If you're having problems getting commands to run or want them to run in a shell, specify the shell in the command. For example:
+
+    ```bash
+    mqcontrol -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
+    ```
+
+- An error in the executed command will cause the entire program to terminate. Stderr and an exit code from the executed command will be available.
+
+## Run the code locally
 
 Get then run with Go:
 
@@ -73,16 +89,50 @@ Run with Go in cloned repo:
 go run main.go -c "echo Message received"
 ```
 
-With Docker:
+With Docker (BuildKit):
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -t mqcontrol .
 docker run -it --rm --network=host mqcontrol -c "echo Message received"
 ```
 
-With docker-compose:
+With docker-compose (BuildKit):
 
 ```bash
-DOCKER_BUILDKIT=1 docker-compose build
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
 docker-compose run mqcontrol -c "echo Message received"
 ```
+
+## Run it at startup
+
+### On Windows using Task Scheduler
+
+1. Open Task Scheduler and select Action -> Create Task from the menu bar.
+1. On the "General" tab, select "Run whether the user is logged in or not" and check "Do not store password...".
+1. On the "Triggers" tab, create a new trigger. Use "On startup" or "At log on".
+1. On the "Actions" tab, create a new action pointing to your mqcontrol binary with desired arguments.
+1. Configure the remaining tabs as desired then click "OK".
+1. Browse to the newly created task under the "Task Scheduler Library". Right click on the task and select "Run".
+
+### On Linux using systemd
+
+1. Create a systemd unit file as below, customise the `ExecStart` line, then save it at `/usr/lib/systemd/system/mqcontrol.service`:
+
+      ```service
+      [Unit]
+      Description=mqcontrol remote control
+
+      [Service]
+      Type=simple
+      ExecStart=/home/user/go/bin/mqcontrol -c "systemctl hibernate" -h 192.168.1.110:1883
+
+      [Install]
+      WantedBy=multi-user.target
+      ```
+
+1. Start and enable the `mqcontrol` service
+
+      ```sh
+      systemctl start mqcontrol
+      systemctl enable mqcontrol
+      ```
