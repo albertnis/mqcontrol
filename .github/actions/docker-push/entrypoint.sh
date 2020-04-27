@@ -7,7 +7,7 @@ docker buildx create --use --name builder
 
 docker login -u albertnis -p $2 docker.io
 
-for RI in debian scratch alpine
+for RI in debian docker scratch alpine
 do
   docker buildx build --target runtime \
     --platform linux/amd64,linux/arm/v7,linux/arm64/v8 \
