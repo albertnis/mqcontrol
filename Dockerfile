@@ -23,6 +23,6 @@ COPY --from=build /project/bin/mqcontrol /mqcontrol
 FROM --platform=$TARGETPLATFORM $TARGETIMAGE AS runtime
 COPY --from=build /project/bin/mqcontrol /bin
 
-ENV PATH "/bin"
+ENV PATH="/bin:${PATH}"
 
 ENTRYPOINT ["mqcontrol"]
