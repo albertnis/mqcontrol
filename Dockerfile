@@ -21,8 +21,8 @@ FROM scratch as export
 COPY --from=build /project/bin/mqcontrol /mqcontrol
 
 FROM --platform=$TARGETPLATFORM $TARGETIMAGE AS runtime
-COPY --from=build /project/bin/mqcontrol /bin
+COPY --from=build /project/bin /bin
 
-ENV PATH="/bin:${PATH}"
+ENV PATH "$PATH:/bin"
 
 ENTRYPOINT ["mqcontrol"]
