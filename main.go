@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
@@ -43,6 +44,25 @@ func createOnConnectHandler(topic string, msg chan []byte) MQTT.OnConnectHandler
 	return func(client MQTT.Client) {
 		log.Println("Client connected")
 		go subscribe(client, topic, msg)
+	}
+}
+
+func connectClientWithRetry(client MQTT.Client, interval time.Duration, tries uint, connectionTimeout chan error) {
+	connectionError := error(nil)
+	for i := uint(0); i < tries; i++ {
+		thisInterval := interval * time.Duration(i)
+		log.Printf("Trying connection in %s [%d/%d]", thisInterval, i+1, tries)
+		time.Sleep(thisInterval)
+		token := client.Connect()
+		token.Wait()
+		connectionError = token.Error()
+		if connectionError == nil {
+			break
+		}
+		log.Println(connectionError.Error())
+	}
+	if connectionError != nil {
+		connectionTimeout <- connectionError
 	}
 }
 
@@ -105,12 +125,15 @@ func main() {
 
 	log.Printf("Connecting to client %s... ", conf.Broker)
 	client := MQTT.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatal(token.Error().Error())
-	}
+
+	connectionTimeout := make(chan error)
+	go connectClientWithRetry(client, 2*time.Second, 10, connectionTimeout)
 
 	for {
 		select {
+		case connError := <-connectionTimeout:
+			log.Printf("Timed out connecting to client %s. Final error:", conf.Broker)
+			log.Fatal(connError.Error())
 		case <-msg:
 			cmd := exec.Command(commandFields[0], commandFields[1:]...)
 			cmd.Stderr = os.Stderr
