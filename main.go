@@ -76,7 +76,7 @@ func main() {
 	brokerPtr := flag.String("h", "127.0.0.1:1883", "Address and port of MQTT broker")
 	clientIDPtr := flag.String("i", "", "ID to use for this client")
 	userPtr := flag.String("u", "", "Username for MQTT connection")
-	passwordPtr := flag.String("P", "", "Password for MQTT connection")
+	passwordPtr := flag.String("p", "", "Password for MQTT connection")
 
 	flag.Parse()
 
