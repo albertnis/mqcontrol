@@ -74,9 +74,9 @@ func main() {
 	commandPtr := flag.String("c", "", "Command to run when any message received on topic")
 	topicPtr := flag.String("t", "computer/command", "Topic to subscribe to")
 	brokerPtr := flag.String("h", "127.0.0.1:1883", "Address and port of MQTT broker")
-	clientIDPtr := flag.String("i", "mqcontrol", "ID to use for this client")
+	clientIDPtr := flag.String("i", "", "ID to use for this client")
 	userPtr := flag.String("u", "", "Username for MQTT connection")
-	passwordPtr := flag.String("P", "", "Password for MQTT connection")
+	passwordPtr := flag.String("p", "", "Password for MQTT connection")
 
 	flag.Parse()
 
@@ -101,6 +101,12 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+	if conf.ClientID == "" {
+		fmt.Println("No client ID argument provided")
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 
 	r := csv.NewReader(strings.NewReader(conf.Command))
 	r.Comma = ' '
@@ -117,7 +123,7 @@ func main() {
 	opts.SetAutoReconnect(true)
 
 	opts.SetConnectionLostHandler(func(c MQTT.Client, err error) {
-		log.Println("Client connection lost unexpectedly")
+		log.Println("Client connection lost unexpectedly.")
 	})
 
 	msg := make(chan []byte)
