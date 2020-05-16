@@ -18,7 +18,7 @@ To complete local installation, add mqcontrol to PATH and/or [run it at startup]
 
 ### Docker
 
-mqcontrol is available on Docker Hub:[albertnis/mqcontrol](https://hub.docker.com/r/albertnis/mqcontrol). The images are cross-platform and available in a variety of flavours. See the Docker Hub overview for more information.
+mqcontrol is available on Docker Hub: [albertnis/mqcontrol](https://hub.docker.com/r/albertnis/mqcontrol). The images are cross-platform and available in a variety of flavours. See the Docker Hub overview for more information.
 
 ```sh
 docker run albertnis/mqcontrol --help
@@ -35,12 +35,12 @@ mqcontrol --help
   -h string
         Address and port of MQTT broker (default "127.0.0.1:1883")
   -i string
-        ID to use for this client (default "mqcontrol")
+        ID to use for this client
   -t string
         Topic to subscribe to (default "computer/command")
   -u string
         Username for MQTT connection
-  -P string
+  -p string
         Password for MQTT connection
 ```
 
@@ -49,19 +49,19 @@ mqcontrol --help
 * Make a topic to hibernate your PC
 
     ```bash
-    mqcontrol -c "systemctl hibernate" -t desktop/command/hibernate
+    mqcontrol -i mqc -c "systemctl hibernate" -t desktop/command/hibernate
     ```
 
 * Dim laptop screen when the lights are turned off
 
     ```bash
-    mqcontrol -c "brightnessctl 50%-" -t lights/bedroom/turnoff
+    mqcontrol -i mqc -c "brightnessctl 50%-" -t lights/bedroom/turnoff
     ```
 
 * Close gzdoom when the office door is opened
 
     ```bash
-    mqcontrol -c "killall gzdoom" -t work/office/door/open
+    mqcontrol -i mqc -c "killall gzdoom" -t work/office/door/open
     ```
 
 ### Notes
@@ -69,7 +69,7 @@ mqcontrol --help
 - The command argument does not include any shell processing. If you're having problems getting commands to run or want them to run in a shell, specify the shell in the command. For example:
 
     ```bash
-    mqcontrol -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
+    mqcontrol -i mqc -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
     ```
 
 - An error in the executed command will cause the entire program to terminate. Stderr and an exit code from the executed command will be available.
@@ -80,27 +80,27 @@ Get then run with Go:
 
 ```bash
 go get github.com/albertnis/mqcontrol
-go run github.com/albertnis/mqcontrol -c "echo Message received"
+go run github.com/albertnis/mqcontrol -i mqc -c "echo Message received"
 ```
 
 Run with Go in cloned repo:
 
 ```bash
-go run main.go -c "echo Message received"
+go run main.go -i mqc -c "echo Message received"
 ```
 
 With Docker (BuildKit):
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -t mqcontrol .
-docker run -it --rm --network=host mqcontrol -c "echo Message received"
+docker run -it --rm --network=host mqcontrol -i mqc -c "echo Message received"
 ```
 
 With docker-compose (BuildKit):
 
 ```bash
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-docker-compose run mqcontrol -c "echo Message received"
+docker-compose run mqcontrol -i mqc -c "echo Message received"
 ```
 
 ## Run it at startup
@@ -124,7 +124,7 @@ docker-compose run mqcontrol -c "echo Message received"
 
       [Service]
       Type=simple
-      ExecStart=/home/user/go/bin/mqcontrol -c "systemctl hibernate" -h 192.168.1.110:1883
+      ExecStart=/home/user/go/bin/mqcontrol -i mqclinux -c "systemctl hibernate" -h 192.168.1.110:1883
 
       [Install]
       WantedBy=multi-user.target
