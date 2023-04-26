@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -22,6 +23,16 @@ type config struct {
 	ClientID string
 	User     string
 	Password string
+}
+
+func randomString(n int) string {
+	const alphanum = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz"
+	var bytes = make([]byte, n)
+	rand.Read(bytes)
+	for i, b := range bytes {
+		bytes[i] = alphanum[b%byte(len(alphanum))]
+	}
+	return string(bytes)
 }
 
 func subscribe(client MQTT.Client, topic string, msg chan []byte) {
@@ -74,7 +85,7 @@ func main() {
 	commandPtr := flag.String("c", "", "Command to run when any message received on topic")
 	topicPtr := flag.String("t", "computer/command", "Topic to subscribe to")
 	brokerPtr := flag.String("h", "127.0.0.1:1883", "Address and port of MQTT broker")
-	clientIDPtr := flag.String("i", "", "ID to use for this client")
+	clientIDPtr := flag.String("i", "mqcontrol-{randomString}", "ID to use for this client")
 	userPtr := flag.String("u", "", "Username for MQTT connection")
 	passwordPtr := flag.String("p", "", "Password for MQTT connection")
 
@@ -102,10 +113,14 @@ func main() {
 		os.Exit(1)
 	}
 	if conf.ClientID == "" {
-		fmt.Println("No client ID argument provided")
+		fmt.Println("Empty client ID argument provided")
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(1)
+	}
+	if conf.ClientID == "mqcontrol-{randomString}" {
+		conf.ClientID = "mqcontrol-" + randomString(8)
+		fmt.Println("No client ID argument provided. Using randomly-generated client ID " + conf.ClientID)
 	}
 
 	r := csv.NewReader(strings.NewReader(conf.Command))

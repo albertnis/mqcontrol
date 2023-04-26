@@ -35,7 +35,7 @@ mqcontrol --help
   -h string
         Address and port of MQTT broker (default "127.0.0.1:1883")
   -i string
-        ID to use for this client
+        ID to use for this client (default "mqcontrol-{randomString}")
   -t string
         Topic to subscribe to (default "computer/command")
   -u string
@@ -46,31 +46,31 @@ mqcontrol --help
 
 ### Examples
 
-* Make a topic to hibernate your PC
+- Make a topic to hibernate your PC
 
-    ```bash
-    mqcontrol -i mqc -c "systemctl hibernate" -t desktop/command/hibernate
-    ```
+  ```bash
+  mqcontrol -c "systemctl hibernate" -t desktop/command/hibernate
+  ```
 
-* Dim laptop screen when the lights are turned off
+- Dim laptop screen when the lights are turned off
 
-    ```bash
-    mqcontrol -i mqc -c "brightnessctl 50%-" -t lights/bedroom/turnoff
-    ```
+  ```bash
+  mqcontrol -c "brightnessctl 50%-" -t lights/bedroom/turnoff
+  ```
 
-* Close gzdoom when the office door is opened
+- Close gzdoom when the office door is opened
 
-    ```bash
-    mqcontrol -i mqc -c "killall gzdoom" -t work/office/door/open
-    ```
+  ```bash
+  mqcontrol -c "killall gzdoom" -t work/office/door/open
+  ```
 
 ### Notes
 
 - The command argument does not include any shell processing. If you're having problems getting commands to run or want them to run in a shell, specify the shell in the command. For example:
 
-    ```bash
-    mqcontrol -i mqc -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
-    ```
+  ```bash
+  mqcontrol -c "/bin/sh -c \"echo message received\"" -t desktop/command/hibernate
+  ```
 
 - An error in the executed command will cause the entire program to terminate. Stderr and an exit code from the executed command will be available.
 
@@ -80,27 +80,27 @@ Get then run with Go:
 
 ```bash
 go get github.com/albertnis/mqcontrol
-go run github.com/albertnis/mqcontrol -i mqc -c "echo Message received"
+go run github.com/albertnis/mqcontrol -c "echo Message received"
 ```
 
 Run with Go in cloned repo:
 
 ```bash
-go run main.go -i mqc -c "echo Message received"
+go run main.go -c "echo Message received"
 ```
 
 With Docker (BuildKit):
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -t mqcontrol .
-docker run -it --rm --network=host mqcontrol -i mqc -c "echo Message received"
+docker run -it --rm --network=host mqcontrol -c "echo Message received"
 ```
 
 With docker-compose (BuildKit):
 
 ```bash
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-docker-compose run mqcontrol -i mqc -c "echo Message received"
+docker-compose run mqcontrol -c "echo Message received"
 ```
 
 ## Run it at startup
@@ -118,21 +118,21 @@ docker-compose run mqcontrol -i mqc -c "echo Message received"
 
 1. Create a systemd unit file as below, customise the `ExecStart` line, then save it at `/usr/lib/systemd/system/mqcontrol.service`:
 
-      ```service
-      [Unit]
-      Description=mqcontrol remote control
+   ```service
+   [Unit]
+   Description=mqcontrol remote control
 
-      [Service]
-      Type=simple
-      ExecStart=/home/user/go/bin/mqcontrol -i mqclinux -c "systemctl hibernate" -h 192.168.1.110:1883
+   [Service]
+   Type=simple
+   ExecStart=/home/user/go/bin/mqcontrol -i mqclinux -c "systemctl hibernate" -h 192.168.1.110:1883
 
-      [Install]
-      WantedBy=multi-user.target
-      ```
+   [Install]
+   WantedBy=multi-user.target
+   ```
 
 1. Start and enable the `mqcontrol` service
 
-      ```sh
-      systemctl start mqcontrol
-      systemctl enable mqcontrol
-      ```
+   ```sh
+   systemctl start mqcontrol
+   systemctl enable mqcontrol
+   ```
