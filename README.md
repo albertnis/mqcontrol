@@ -99,8 +99,8 @@ docker run -it --rm --network=host mqcontrol -c "echo Message received"
 With docker-compose (BuildKit):
 
 ```bash
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
-docker-compose run mqcontrol -c "echo Message received"
+docker compose build
+docker compose run mqcontrol -c "echo Message received"
 ```
 
 ## Run it at startup
